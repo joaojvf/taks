@@ -1,2 +1,8 @@
 # ignore config path
 **/config
+
+**/knexfile.js
+node_modules
+**/.log
+**/.env
+.env
