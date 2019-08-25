@@ -1,6 +1,6 @@
-const { authSecret } = require('../.env');
-const jwt = require('jwt-simple');
-const bcrypt = require('bcrypt-nodejs');
+const { authSecret } = require('../.env')
+const jwt = require('jwt-simple')
+const bcrypt = require('bcrypt-nodejs')
 
 module.exports = app => {
     const signin = async (req, res) => {
@@ -11,11 +11,13 @@ module.exports = app => {
         }
 
         const user = await app.db('users')
-            .where({ email: req.body.email })
-            .first()
+        .whereRaw("LOWER(email) = LOWER(?)", req.body.email)
+        .first()
 
         if (user) {
             bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
+                console.log("Senha na requisição:" + req.body.password);
+                console.log("Senha no db: " + user.password);
 
                 if (err || !isMatch) {
                     return res.status(401).send()
