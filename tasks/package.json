@@ -5,15 +5,18 @@
   "scripts": {
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "npx jetify"
   },
   "dependencies": {
     "moment": "^2.24.0",
     "react": "16.8.6",
     "react-native": "0.60.5",
     "react-native-action-button": "^2.8.5",
+    "react-native-gesture-handler": "^1.4.1",
     "react-native-swipeable": "^0.6.0",
-    "react-native-vector-icons": "^6.6.0"
+    "react-native-vector-icons": "^6.6.0",
+    "react-navigation": "^3.12.1"
   },
   "devDependencies": {
     "@babel/core": "7.5.5",
@@ -21,8 +24,12 @@
     "@react-native-community/eslint-config": "0.0.3",
     "babel-jest": "24.9.0",
     "eslint": "6.1.0",
+    "install": "^0.13.0",
     "jest": "24.9.0",
+    "jetifier": "^1.6.4",
     "metro-react-native-babel-preset": "0.54.1",
+    "npm": "^6.11.2",
+    "ou": "^0.0.2",
     "react-test-renderer": "16.8.6"
   },
   "jest": {
