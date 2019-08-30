@@ -8,6 +8,8 @@ import {
     TouchableOpacity,
     Alert
 } from 'react-native';
+import axios from 'axios';
+import { server, showError } from '../common'
 import AuthInput from '../components/Authinput'
 import commonStyles from '../commonStyles';
 import backgroundImage from '../../assets/imgs/login.jpg';
@@ -21,12 +23,40 @@ export default class Auth extends Component {
         confirmPassword: '',
     };
 
-    signinOrSignup = () => {
+    signinOrSignup = async () => {
         if (this.state.stageNew) {
-            Alert.alert('Sucesso!', 'Criar conta');
+            try {
+                await axios.post(`${server}/signup`,
+                    {
+                        name: this.state.name,
+                        email: this.state.email,
+                        password: this.state.password,
+                        confirmPassword: this.state.confirmPassword,
+                    });
+
+                Alert.alert('Sucesso!', 'Usuário Cadastrado ;)');
+                this.setState({ stageNew: false })
+
+            } catch (err) {
+                showError(err);
+            }
         }
         else {
-            Alert.alert('Sucesso!', 'Logar');
+            try {
+                const res = await axios.post(`${server}/signin`, {
+                    email: this.state.email,
+                    password: this.state.password
+                });
+
+                axios.defaults.headers.common['Authorization'] = `bearer ${res.data.token}`;
+                Alert.alert('Sucesso!', 'Logar');
+
+                this.props.navigation.navigate('Home')
+
+            } catch (err) {
+                // Alert.alert('Erro', 'Faça no Login');
+                 showError(err);
+            }
         }
     }
 
@@ -45,14 +75,14 @@ export default class Auth extends Component {
                     <AuthInput icon='at' placeholder='E-mail' style={styles.input}
                         value={this.state.email}
                         onChangeText={email => this.setState({ email })} />
-                    <AuthInput icon='lock' secureTextEntry={true} 
+                    <AuthInput icon='lock' secureTextEntry={true}
                         placeholder='Senha' style={styles.input}
                         value={this.state.password}
                         onChangeText={password => this.setState({ password })} />
                     {this.state.stageNew &&
-                        <AuthInput icon='asterisk' secureTextEntry={true} 
+                        <AuthInput icon='asterisk' secureTextEntry={true}
                             placeholder='Confirmação' style={styles.input}
-                            value={confirmPassword}
+                            value={this.state.confirmPassword}
                             onChangeText={confirmPassword => this.setState({ confirmPassword })} />}
                     <TouchableOpacity onPress={this.signinOrSignup}>
                         <View style={styles.button}>
@@ -77,7 +107,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         alignItems: 'center',
-        justifyContent:'center'
+        justifyContent: 'center'
     },
 
     title: {
