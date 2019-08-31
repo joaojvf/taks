@@ -23,44 +23,65 @@ export default class Auth extends Component {
         confirmPassword: '',
     };
 
-    signinOrSignup = async () => {
-        if (this.state.stageNew) {
-            try {
-                await axios.post(`${server}/signup`,
-                    {
-                        name: this.state.name,
-                        email: this.state.email,
-                        password: this.state.password,
-                        confirmPassword: this.state.confirmPassword,
-                    });
+    signin = async () => {
+        try {
+            const res = await axios.post(`${server}/signin`, {
+                email: this.state.email,
+                password: this.state.password
+            });
 
-                Alert.alert('Sucesso!', 'Usuário Cadastrado ;)');
-                this.setState({ stageNew: false })
+            axios.defaults.headers.common['Authorization'] = `bearer ${res.data.token}`;
+            Alert.alert('Sucesso!', 'Logar');
 
-            } catch (err) {
-                showError(err);
-            }
+            this.props.navigation.navigate('Home')
+
+        } catch (err) {
+            // Alert.alert('Erro', 'Faça no Login');
+             showError(err);
         }
-        else {
-            try {
-                const res = await axios.post(`${server}/signin`, {
+    };
+
+    signup = async () => {
+        try {
+            await axios.post(`${server}/signup`,
+                {
+                    name: this.state.name,
                     email: this.state.email,
-                    password: this.state.password
+                    password: this.state.password,
+                    confirmPassword: this.state.confirmPassword,
                 });
 
-                axios.defaults.headers.common['Authorization'] = `bearer ${res.data.token}`;
-                Alert.alert('Sucesso!', 'Logar');
+            Alert.alert('Sucesso!', 'Usuário Cadastrado ;)');
+            this.setState({ stageNew: false })
 
-                this.props.navigation.navigate('Home')
+        } catch (err) {
+            showError(err);
+        }
+    };
 
-            } catch (err) {
-                // Alert.alert('Erro', 'Faça no Login');
-                 showError(err);
-            }
+    signinOrSignup = async () => {
+        if (this.state.stageNew) {
+            this.signup();
+        }
+        else {
+            this.signin();
         }
     }
 
     render() {
+        const validations = [];
+
+        validations.push(this.state.email && this.state.email.includes('@'));
+        validations.push(this.state.password && this.state.password.length>= 6);
+
+        if (this.state.stageNew) {
+            validations.push(this.state.name && this.state.name.trim());
+            validations.push(this.state.confirmPassword);
+            validations.push(this.state.password === this.state.confirmPassword);
+        }
+
+        const validForm = validations.reduce((all, v) => all && v);
+
         return (
             <ImageBackground source={backgroundImage} style={styles.background}>
                 <Text style={styles.title}>Tasks</Text>
@@ -84,8 +105,9 @@ export default class Auth extends Component {
                             placeholder='Confirmação' style={styles.input}
                             value={this.state.confirmPassword}
                             onChangeText={confirmPassword => this.setState({ confirmPassword })} />}
-                    <TouchableOpacity onPress={this.signinOrSignup}>
-                        <View style={styles.button}>
+                    <TouchableOpacity disabled={!validForm}
+                        onPress={this.signinOrSignup}>
+                        <View style={[styles.button, !validForm ? {backgroundColor: '#AAA'} : {}]}>
                             <Text style={styles.buttonText}>
                                 {this.state.stageNew ? 'Registrar' : 'Entrar'}
                             </Text>
