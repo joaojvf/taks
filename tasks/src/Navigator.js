@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react';
 import {createAppContainer, createDrawerNavigator, createStackNavigator} from 'react-navigation';
+import Menu from './screens/Menu'
 import Agenda from './screens/Agenda';
 import Auth from './screens/Auth';
+import AuthOrApp from './screens/AuthOrApp';
 import commonStyles from './commonStyles'
 
 
@@ -42,6 +44,7 @@ const MenuRoutes = {
 
 const MenuConfig = {
     initialRouteName: 'Today',
+    contentComponent: Menu,
     contentOptions: {
         labelStyle: {
             fontFamily: commonStyles.fontFamily,
@@ -57,6 +60,10 @@ const MenuConfig = {
 const MenuNavigator = createDrawerNavigator(MenuRoutes, MenuConfig);
 
 const MainRoutes = {
+    Loading: {
+        name: 'Loading',
+        screen: AuthOrApp
+    },
     Auth: { 
         screen: Auth,
     },
@@ -66,7 +73,7 @@ const MainRoutes = {
 };
 
 const MainNavigator = createAppContainer(
-    createStackNavigator(MainRoutes, {initialRouteName: 'Auth'})
+    createStackNavigator(MainRoutes, {initialRouteName: 'Loading'})
 );
 
 export default MainNavigator;
