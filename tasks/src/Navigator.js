@@ -3,7 +3,7 @@ import {createAppContainer, createDrawerNavigator, createStackNavigator} from 'r
 import Menu from './screens/Menu'
 import Agenda from './screens/Agenda';
 import Auth from './screens/Auth';
-import AuthOrApp from './screens/AuthOrApp';
+import AuthOrApp from './screens/AuthOrApp'
 import commonStyles from './commonStyles'
 
 
@@ -62,18 +62,37 @@ const MenuNavigator = createDrawerNavigator(MenuRoutes, MenuConfig);
 const MainRoutes = {
     Loading: {
         name: 'Loading',
-        screen: AuthOrApp
-    },
-    Auth: { 
-        screen: Auth,
-    },
-    Home: { 
-        screen: MenuNavigator,
-    },
-};
 
+    },
+    Auth: {
+        name: 'Auth',
+        screen: Auth
+    },
+    Home: {
+        name: 'Home',
+        screen: MenuNavigator
+    }
+}
 const MainNavigator = createAppContainer(
-    createStackNavigator(MainRoutes, {initialRouteName: 'Loading'})
+    createStackNavigator({
+        Loading: {
+            name: 'Loading',
+            screen:AuthOrApp
+        },
+        Auth: {
+            name: 'Auth',
+            screen: Auth
+        },
+        Home: {
+            name: 'Home',
+            screen: MenuNavigator
+        } 
+    }, {
+        initialRouteName: 'Loading',
+        defaultNavigationOptions: {
+            header: null
+        }
+    })
 );
 
 export default MainNavigator;
